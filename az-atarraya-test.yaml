@@ -29,6 +29,11 @@ spec:
               '/atarraya/az-atarraya -c echo -args "Hello World" & sleep 10',
             ]
           imagePullPolicy: Always
+          env:
+            - name: ATARRAYA_SECRET_<SECRET NAME>
+              value: ""
+            - name: ATARRAYA_AZURE_KEYVAULT_NAME
+              value: "<KEYVAULT NAME>"
           resources:
             requests:
               memory: "16Mi"
