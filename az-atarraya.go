@@ -26,7 +26,7 @@ func main() {
 	for _, varName := range os.Environ() {
 		if strings.HasPrefix(varName, secretprefix) {
 			pair := strings.SplitN(varName, "=", 2)
-			secretsToRead = append(secretsToRead, strings.Replace(pair[0], envprefix, "", -1))
+			secretsToRead = append(secretsToRead, strings.Replace(pair[0], secretprefix, "", -1))
 		}
 	}
 
