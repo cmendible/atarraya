@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: az-atarraya-test
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: az-atarraya-test
+        aadpodidbinding: requires-vault
+    spec:
+      initContainers:
+        - name: az-atarraya-init
+          image: cmendibl3/az-atarraya:0.1
+          imagePullPolicy: Always
+          command: ["sh", "-c", "cp /usr/local/bin/az-atarraya /atarraya/"]
+          volumeMounts:
+            - mountPath: "/atarraya/"
+              name: atarraya-volume
+      containers:
+        - name: busybox
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              '/atarraya/az-atarraya -c echo -args "Hello World" & sleep 10',
+            ]
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "100m"
+            limits:
+              memory: "32Mi"
+              cpu: "200m"
+          volumeMounts:
+            - mountPath: "/atarraya/"
+              name: atarraya-volume
+      volumes:
+        - name: atarraya-volume
+          emptyDir:
+            medium: Memory
+            sizeLimit: "10Mi" # This memory counts on the container limits!
