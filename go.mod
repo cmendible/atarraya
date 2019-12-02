@@ -1,4 +1,4 @@
-module az-keyvault-reader-sidecar-injector
+module az-atarraya
 
 go 1.13
 
