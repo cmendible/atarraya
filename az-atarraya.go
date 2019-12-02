@@ -12,6 +12,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/2016-10-01/keyvault"
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/auth"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -22,6 +23,8 @@ var (
 )
 
 func main() {
+	godotenv.Load()
+
 	var secretsToRead []string
 	for _, varName := range os.Environ() {
 		if strings.HasPrefix(varName, secretprefix) {
