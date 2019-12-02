@@ -19,7 +19,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w'
 FROM alpine:3.10
 # Copy the CA certificates
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
-COPY --from=builder src/az-atarraya /usr/local/bin/az-atarraya
+COPY --from=builder /src/az-atarraya /usr/local/bin/az-atarraya
 # Copy and use the dummy user 
 COPY --from=builder /etc_passwd /etc/passwd
-USER dummy
