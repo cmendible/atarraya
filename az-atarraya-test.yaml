@@ -20,15 +20,15 @@ spec:
             - mountPath: "/atarraya/"
               name: atarraya-volume
       containers:
-        - name: busybox
-          image: busybox
+        - name: testbox
+          image: alpine:3.10
           command:
-            [
-              "sh",
-              "-c",
-              '/atarraya/az-atarraya -c echo -args "Hello World" & sleep 10',
-            ]
-          imagePullPolicy: Always
+            - /atarraya/az-atarraya
+          args:
+            - sh
+            - -c
+            - echo $<SECRET NAME>
+          imagePullPolicy: IfNotPresent
           env:
             - name: ATARRAYA_SECRET_<SECRET NAME>
               value: ""
