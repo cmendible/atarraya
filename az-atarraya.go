@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -25,6 +24,18 @@ var (
 func main() {
 	godotenv.Load()
 
+	var cmd []string
+	if len(os.Args) == 1 {
+		log.Fatalln("no command is given, atarraya can't determine the entrypoint (command), please specify it explicitly or let the webhook query it (see documentation)")
+	} else {
+		cmd = os.Args[1:]
+	}
+
+	_, err := exec.LookPath(cmd[0])
+	if err != nil {
+		log.Fatalln("binary not found", cmd[0])
+	}
+
 	var secretsToRead []string
 	for _, varName := range os.Environ() {
 		if strings.HasPrefix(varName, secretprefix) {
@@ -37,8 +48,11 @@ func main() {
 	keyvaultName = os.Getenv(envprefix + "AZURE_KEYVAULT_NAME")
 	keyvaultEndpoint = fmt.Sprintf("https://%s.vault.azure.net", keyvaultName)
 
+	log.Printf("keyvaultEndpoint: %s", keyvaultEndpoint)
+
 	for _, secretName := range secretsToRead {
 		// Fetch secret here & append it to the environment vars
+		log.Printf("Reading: %s", secretName)
 		secret, err := getKeyVaultSecret(secretName, "")
 		if err != nil {
 			log.Fatal(err)
@@ -46,21 +60,15 @@ func main() {
 		os.Setenv(secretName, secret)
 	}
 
-	commandToRun := flag.String("c", "", "command to run")
-	commandArgs := flag.String("args", "", "command arguments")
-	flag.Parse()
-
-	fmt.Println("Command to run:", *commandToRun)
-	fmt.Println("Arguments:", *commandArgs)
-
-	cmd := exec.Command(*commandToRun, *commandArgs)
-	cmd.Env = os.Environ()
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+	executable := exec.Command(cmd[0], cmd[1:]...)
+	executable.Env = os.Environ()
+	executable.Stdout = os.Stdout
+	executable.Stderr = os.Stderr
+	err = executable.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
 
 func getKeyVaultSecret(secretname string, secretversion string) (string, error) {
