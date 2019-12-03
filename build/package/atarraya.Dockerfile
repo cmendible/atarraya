@@ -13,12 +13,12 @@ RUN echo "dummy:x:1001:1001:Dummy:/:" > /etc_passwd
 WORKDIR /src
 ADD go.mod go.sum ./
 RUN go mod download
-ADD az-atarraya.go ./
+ADD cmd/atarraya/atarraya.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w'
 
 FROM alpine:3.10
 # Copy the CA certificates
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
-COPY --from=builder /src/az-atarraya /usr/local/bin/az-atarraya
+COPY --from=builder /src/atarraya /usr/local/bin/atarraya
 # Copy and use the dummy user 
 COPY --from=builder /etc_passwd /etc/passwd

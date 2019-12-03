@@ -15,7 +15,7 @@ spec:
         - name: az-atarraya-init
           image: cmendibl3/az-atarraya:0.1
           imagePullPolicy: Always
-          command: ["sh", "-c", "cp /usr/local/bin/az-atarraya /atarraya/"]
+          command: ["sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"]
           volumeMounts:
             - mountPath: "/atarraya/"
               name: atarraya-volume
@@ -23,7 +23,7 @@ spec:
         - name: testbox
           image: alpine:3.10
           command:
-            - /atarraya/az-atarraya
+            - /atarraya/atarraya
           args:
             - sh
             - -c
