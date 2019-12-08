@@ -11,6 +11,9 @@ import (
 	"syscall"
 
 	"github.com/golang/glog"
+	whhttp "github.com/slok/kubewebhook/pkg/http"
+	"github.com/slok/kubewebhook/pkg/webhook/mutating"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func init() {
@@ -40,21 +43,28 @@ func main() {
 		glog.Errorf("Failed to load key pair: %v", err)
 	}
 
-	whsvr := webhookServer{
+	server := webhookServer{
 		Server: &http.Server{
 			Addr:      fmt.Sprintf(":%v", 8443),
 			TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 		},
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/mutate", whsvr.mutateHandler)
-	mux.HandleFunc("/health", whsvr.healthHandler)
+	mutator := mutating.MutatorFunc(server.atarrayaMutator)
+	webhook, err := mutating.NewWebhook(mutating.WebhookConfig{Name: "atarraya-mutator", Obj: &corev1.Pod{}}, mutator, nil, nil, nil)
+	handler, err := whhttp.HandlerFor(webhook)
+	if err != nil {
+		glog.Fatalf("error creating webhook: %s", err)
+	}
 
-	whsvr.Server.Handler = mux
+	mux := http.NewServeMux()
+	mux.Handle("/mutate", handler)
+	mux.HandleFunc("/health", server.healthHandler)
+
+	server.Server.Handler = mux
 
 	go func() {
-		if err := whsvr.Server.ListenAndServeTLS("", ""); err != nil {
+		if err := server.Server.ListenAndServeTLS("", ""); err != nil {
 			glog.Errorf("Failed to listen and serve webhook server: %v", err)
 		}
 	}()
@@ -67,5 +77,5 @@ func main() {
 	<-signalChan
 
 	glog.Infof("Got OS shutdown signal, shutting down webhook server gracefully...")
-	whsvr.Server.Shutdown(context.Background())
+	server.Server.Shutdown(context.Background())
 }
