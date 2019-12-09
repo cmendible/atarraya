@@ -10,24 +10,13 @@ spec:
       labels:
         app: az-atarraya-test
         aadpodidbinding: requires-vault
+      annotations:
+        atarraya/keyvault: <KEYVAULT NAME>
     spec:
-      initContainers:
-        - name: az-atarraya-init
-          image: cmendibl3/az-atarraya:0.1
-          imagePullPolicy: Always
-          command: ["sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"]
-          volumeMounts:
-            - mountPath: "/atarraya/"
-              name: atarraya-volume
       containers:
         - name: testbox
           image: alpine:3.10
-          command:
-            - /atarraya/atarraya
-          args:
-            - sh
-            - -c
-            - echo $<SECRET NAME>
+          command: ["sh", "-c", "echo $<SECRET NAME>"]
           imagePullPolicy: IfNotPresent
           env:
             - name: ATARRAYA_SECRET_<SECRET NAME>
@@ -41,10 +30,3 @@ spec:
             limits:
               memory: "32Mi"
               cpu: "200m"
-          volumeMounts:
-            - mountPath: "/atarraya/"
-              name: atarraya-volume
-      volumes:
-        - name: atarraya-volume
-          emptyDir:
-            medium: Memory
