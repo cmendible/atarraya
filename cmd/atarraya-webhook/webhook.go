@@ -34,7 +34,7 @@ type webhookServer struct {
 	Server *http.Server
 }
 
-func (mwh *webhookServer) mutateContainers(containers []corev1.Container, podSpec *corev1.PodSpec) (bool, error) {
+func (mwh *webhookServer) mutateContainers(containers []corev1.Container, podSpec *corev1.PodSpec, keyvaultName string) (bool, error) {
 	mutated := false
 
 	for i, container := range containers {
@@ -51,6 +51,13 @@ func (mwh *webhookServer) mutateContainers(containers []corev1.Container, podSpe
 			{
 				Name:      "atarraya-volume",
 				MountPath: "/atarraya/",
+			},
+		}...)
+
+		container.Env = append(container.Env, []corev1.EnvVar{
+			{
+				Name:  "ATARRAYA_AZURE_KEYVAULT_NAME",
+				Value: keyvaultName,
 			},
 		}...)
 
@@ -123,14 +130,14 @@ func (mwh *webhookServer) mutatePod(pod *corev1.Pod) error {
 	}
 
 	// determine whether to perform mutation based on annotation for the target resource
-	_, ok = annotations[requiredAnnotation]
+	keyvaultName, ok := annotations[requiredAnnotation]
 	if !ok {
 		glog.Infof("Pod %s/%s annotation %s is missing, skipping injection", metadata.Namespace, metadata.Name, requiredAnnotation)
 		skip = true
 	}
 
 	if !skip {
-		mwh.mutateContainers(pod.Spec.Containers, &pod.Spec)
+		mwh.mutateContainers(pod.Spec.Containers, &pod.Spec, keyvaultName)
 		pod.Spec.InitContainers = append(getInitContainers(), pod.Spec.InitContainers...)
 		pod.Spec.Volumes = append(pod.Spec.Volumes, getVolumes()...)
 		pod.ObjectMeta.Annotations[statusAnnotationKey] = statusInjected
