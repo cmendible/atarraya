@@ -34,7 +34,7 @@ type webhookServer struct {
 	Server *http.Server
 }
 
-func (mwh *webhookServer) mutateContainers(containers []corev1.Container, podSpec *corev1.PodSpec, keyvaultName string) (bool, error) {
+func (mwh *webhookServer) mutateContainers(containers []corev1.Container, keyvaultName string) (bool, error) {
 	mutated := false
 
 	for i, container := range containers {
@@ -137,7 +137,7 @@ func (mwh *webhookServer) mutatePod(pod *corev1.Pod) error {
 	}
 
 	if !skip {
-		mwh.mutateContainers(pod.Spec.Containers, &pod.Spec, keyvaultName)
+		mwh.mutateContainers(pod.Spec.Containers, keyvaultName)
 		pod.Spec.InitContainers = append(getInitContainers(), pod.Spec.InitContainers...)
 		pod.Spec.Volumes = append(pod.Spec.Volumes, getVolumes()...)
 		pod.ObjectMeta.Annotations[statusAnnotationKey] = statusInjected
