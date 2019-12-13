@@ -15,7 +15,7 @@ ADD go.mod go.sum ./
 RUN go mod download
 ADD cmd/atarraya-webhook/main.go ./
 ADD cmd/atarraya-webhook/webhook.go ./
-RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w'
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-w' -o atarraya-webhook
 
 FROM alpine:3.10
 ENV TLS_CERT_FILE=/var/lib/secrets/cert.crt \
@@ -26,7 +26,7 @@ COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 EXPOSE 8443
 # Copy and use the dummy user 
 COPY --from=builder /etc_passwd /etc/passwd
-COPY --from=builder src/atarraya /bin/atarraya
+COPY --from=builder src/atarraya-webhook /bin/atarraya-webhook
 COPY ./build/package/entrypoint.sh /bin/entrypoint.sh
 USER dummy
 ENTRYPOINT ["entrypoint.sh"]
