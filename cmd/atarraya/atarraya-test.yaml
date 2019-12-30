@@ -31,7 +31,6 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: ATARRAYA_SECRET_<SECRET NAME>
-              value: ""
             - name: ATARRAYA_AZURE_KEYVAULT_NAME
               value: "<KEYVAULT NAME>"
           resources:

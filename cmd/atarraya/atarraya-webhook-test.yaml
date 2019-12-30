@@ -20,7 +20,6 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: ATARRAYA_SECRET_<SECRET NAME>
-              value: ""
           resources:
             requests:
               memory: "16Mi"
