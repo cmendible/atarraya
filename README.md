@@ -6,6 +6,10 @@ With **atarraya** it's possible to avoid the use of Kubernetes secrets and any c
 
 This project is an evolution of my work on [az-keyvault-reader](https://github.com/cmendible/az-keyvault-reader) and inspired by the following post: [Inject secrets directly into Pods from Vault revisited](https://banzaicloud.com/blog/inject-secrets-into-pods-vault-revisited/) by Nandor Kracser for [BanzaiCloud](https://banzaicloud.com/)
 
+## Disclaimer
+
+**atarraya** is **not production ready**
+
 ## Components
 
 * **atarraya-webhook**: A Mutating Admission Webhook designed to inject an executable (atarraya) into the containers inside Pods in such a way that the containers runs it instead of running the original application.
