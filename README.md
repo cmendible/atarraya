@@ -7,7 +7,7 @@ This project is an evolution of my work on [az-keyvault-reader](https://github.c
 ## Components
 
 * **atarraya-webhook**: A Mutating Admission Webhook designed to inject an executable (atarraya) into the containers inside Pods in such a way that the containers runs it instead of running the original application.
-* **atarraya**: An wrapper executable designed to read secrets from an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) and inject them as environment variables into a process that runs the original application of the containers.
+* **atarraya**: A wrapper executable designed to read secrets from an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) and inject them as environment variables into a process that runs the original application of the containers.
 
 ## Dependencies
 
