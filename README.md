@@ -1,6 +1,8 @@
 # atarraya
 
-**atarraya** is a solution designed to inject secrets from an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) into Pods running in [Azure Kubernetes Service](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS), using environment variables without having to modify your code or add dependencies to the Azure SDK.
+**atarraya** is a solution designed to inject secrets from an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) into Pods running in [Azure Kubernetes Service](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS), using environment variables.
+
+With **atarraya** it's possible to avoid the use of Kubernetes secrets and any code modification related to connecting and querying secrets from an [Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/).
 
 This project is an evolution of my work on [az-keyvault-reader](https://github.com/cmendible/az-keyvault-reader) and inspired by the following post: [Inject secrets directly into Pods from Vault revisited](https://banzaicloud.com/blog/inject-secrets-into-pods-vault-revisited/) by Nandor Kracser for [BanzaiCloud](https://banzaicloud.com/)
 
