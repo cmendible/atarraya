@@ -19,6 +19,22 @@ This project is an evolution of my work on [az-keyvault-reader](https://github.c
 
 **atarraya** works better if used with [AAD Pod Identities](https://github.com/Azure/aad-pod-identity).
 
+## atarraya-webhook Installation
+
+To install run:
+
+``` shell
+git clone https://github.com/cmendible/atarraya.git
+cd ./atarraya/charts
+helm install atarraya-webhook -name atarraya-webhook --namespace kube-system --set caBundle=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
+```
+
+To uninstall run:
+
+``` shell
+helm uninstall atarraya-webhook --namespace kube-system
+```
+
 ## How it works
 
 1. When a deployment is pushed to Kubernetes, **atarraya-webhook** check for the ```atarraya/keyvault``` annotation to see if it needs to do its magic.
