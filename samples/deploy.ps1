@@ -60,7 +60,7 @@ $env:TF_VAR_managed_identity_client_id = $identity.principalId
 $env:TF_VAR_current_user_object_id = $currentUserObjectId
 
 terraform init
-terraform apply
+terraform apply -auto-approve
 
 az aks get-credentials -g $resourceGroupName -n $aksName --admin
 
