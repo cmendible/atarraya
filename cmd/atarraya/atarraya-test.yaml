@@ -27,10 +27,10 @@ spec:
           args:
             - sh
             - -c
-            - echo $<SECRET NAME>
+            - echo $secret
           imagePullPolicy: IfNotPresent
           env:
-            - name: ATARRAYA_SECRET_<SECRET NAME>
+            - name: ATARRAYA_SECRET_secret
             - name: ATARRAYA_AZURE_KEYVAULT_NAME
               value: "<KEYVAULT NAME>"
           resources:
