@@ -25,4 +25,8 @@ variable key_vault_name {
   default = "atarraya-vault"
 }
 
+variable current_user_object_id {}
+
 variable managed_identity_client_id {}
+
+

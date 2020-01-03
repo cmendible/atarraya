@@ -7,15 +7,16 @@ terraform {
   }
 }
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+data "azurerm_subscription" "current" {}
+
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
 }
 
 resource "azurerm_kubernetes_cluster" "k8s" {
   name                = var.cluster_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = var.dns_prefix
 
   default_node_pool {
@@ -34,15 +35,33 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   }
 }
 
-data "azurerm_subscription" "current" {}
-
 resource "azurerm_key_vault" "kv" {
   name                = var.key_vault_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_subscription.current.tenant_id
 
   sku_name = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_subscription.current.tenant_id
+    object_id = var.current_user_object_id
+
+    key_permissions = []
+
+    secret_permissions = [
+      "backup",
+      "delete",
+      "get",
+      "list",
+      "purge",
+      "recover",
+      "restore",
+      "set"
+    ]
+
+    storage_permissions = []
+  }
 
   access_policy {
     tenant_id = data.azurerm_subscription.current.tenant_id

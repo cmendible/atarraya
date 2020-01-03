@@ -10,6 +10,9 @@ param(
   $resourceGroupName = "atarraya-sample",
   [string]
   [Parameter(Mandatory = $false)]
+  $location = "West Europe",
+  [string]
+  [Parameter(Mandatory = $false)]
   $identityName = "atarraya-sample",
   [string]
   [Parameter(Mandatory = $false)]
@@ -24,6 +27,8 @@ param(
 
 # Get the current subscription
 $subscriptionId = (az account show | ConvertFrom-Json).id
+
+az group create -n $resourceGroupName -l $location
 
 # Create Managed Identity
 $identity = az identity create `
@@ -43,6 +48,8 @@ az role assignment create `
   --assignee $client_id `
   --scope $identity.id
 
+$currentUserObjectId = (az ad signed-in-user show | ConvertFrom-Json).objectId
+
 $env:TF_VAR_client_id = $client_id
 $env:TF_VAR_client_secret = $client_secret
 $env:TF_VAR_resource_group_name = $resourceGroupName
@@ -50,7 +57,9 @@ $env:TF_VAR_cluster_name = $aksName
 $env:TF_VAR_dns_prefix = $aksName
 $env:TF_VAR_key_vault_name = $keyVaultName
 $env:TF_VAR_managed_identity_client_id = $identity.principalId
+$env:TF_VAR_current_user_object_id = $currentUserObjectId
 
+terraform init
 terraform apply
 
 az aks get-credentials -g $resourceGroupName -n $aksName --admin
@@ -81,11 +90,8 @@ spec:
 # Deploy the yamls 
 $k8sAzureIdentityandBinding | kubectl apply -f -
 
-# Go to charts dir
-cd ../charts
-
 # Install Atarraya webhook
-helm install atarraya-webhook -name atarraya-webhook --namespace kube-system --set caBundle=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
+helm install atarraya-webhook ../charts/atarraya-webhook --namespace kube-system --set caBundle=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
 
 # Deploy sample
-((Get-Content -path ../cmd/atarraya/atarraya-test -Raw) -replace '<KEYVAULT NAME>', $keyVaultName) | kubectl aplpy -f -
+((Get-Content -path ../cmd/atarraya/atarraya-test.yaml -Raw) -replace '<KEYVAULT NAME>', $keyVaultName) | kubectl apply -f -
