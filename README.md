@@ -103,7 +103,7 @@ spec:
     spec:
       initContainers:
         - name: az-atarraya-init
-          image: cmendibl3/az-atarraya:0.1
+          image: cmendibl3/atarraya:0.1
           imagePullPolicy: Always
           command: ["sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"]
           volumeMounts:
