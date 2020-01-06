@@ -95,3 +95,5 @@ helm install atarraya-webhook ../charts/atarraya-webhook --namespace kube-system
 
 # Deploy sample
 ((Get-Content -path ../cmd/atarraya/atarraya-test.yaml -Raw) -replace '<KEYVAULT NAME>', $keyVaultName) | kubectl apply -f -
+
+kubectl logs -f $(kubectl get po --selector=app=az-atarraya-test -n default -o jsonpath='{.items[*].metadata.name}') -c testbox -n default
