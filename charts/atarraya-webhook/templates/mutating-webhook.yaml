@@ -1,3 +1,6 @@
+{{- $altNames := list ( printf "%s.%s" (include "atarraya-webhook.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "atarraya-webhook.name" .) .Release.Namespace ) -}}
+{{- $ca := genCA "atarraya-webhook-ca" 365 -}}
+{{- $cert := genSignedCert ( include "atarraya-webhook.name" . ) nil $altNames 365 $ca -}}
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -20,4 +23,22 @@ webhooks:
         namespace: {{ .Release.Namespace }}
         path: "/mutate" # what /url/slug to send requests at
       # See README.md for how this was generated!
-      caBundle: {{ .Values.caBundle }}
+      caBundle: {{ $ca.Cert | b64enc }}
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ template "atarraya-webhook.name" . }}-certs
+  labels:
+    app: {{ template "atarraya-webhook.name" . }}
+    chart: {{ template "atarraya-webhook.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+data:
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}

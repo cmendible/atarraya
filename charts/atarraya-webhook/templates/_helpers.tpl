@@ -30,14 +30,3 @@ Create chart name and version as used by the chart label.
 {{- define "atarraya-webhook.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-
-{{/*
-Generate certificates for atarraya-webhook
-*/}}
-{{- define "atarraya-webhook.gen-certs" -}}
-{{- $altNames := list ( printf "%s.%s" (include "atarraya-webhook.name" .) .Release.Namespace ) ( printf "%s.%s.svc" (include "atarraya-webhook.name" .) .Release.Namespace ) -}}
-{{- $ca := genCA "atarraya-webhook-ca" 365 -}}
-{{- $cert := genSignedCert ( include "atarraya-webhook.name" . ) nil $altNames 365 $ca -}}
-tls.crt: {{ $cert.Cert | b64enc }}
-tls.key: {{ $cert.Key | b64enc }}
-{{- end -}}
