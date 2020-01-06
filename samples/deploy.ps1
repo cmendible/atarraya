@@ -91,7 +91,7 @@ spec:
 $k8sAzureIdentityandBinding | kubectl apply -f -
 
 # Install Atarraya webhook
-helm install atarraya-webhook ../charts/atarraya-webhook --namespace kube-system --set caBundle=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
+helm install atarraya-webhook ../charts/atarraya-webhook --namespace kube-system
 
 # Deploy sample
 ((Get-Content -path ../cmd/atarraya/atarraya-webhook-test.yaml -Raw).Replace('<KEYVAULT NAME>', $keyVaultName).Replace('<SECRET NAME>', 'secret')) | kubectl apply -f -

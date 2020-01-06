@@ -25,7 +25,7 @@ To install run:
 
 ``` shell
 git clone https://github.com/cmendible/atarraya.git
-helm install atarraya-webhook ./atarraya/charts/atarraya-webhook --namespace kube-system --set caBundle=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}')
+helm install atarraya-webhook ./atarraya/charts/atarraya-webhook --namespace kube-system
 ```
 
 To uninstall run:
