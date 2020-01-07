@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/golang/glog"
+	"github.com/spf13/viper"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -71,8 +72,8 @@ func getInitContainers() []corev1.Container {
 	return []corev1.Container{
 		{
 			Name:            "az-atarraya-init",
-			Image:           "cmendibl3/atarraya:0.1",
-			ImagePullPolicy: corev1.PullAlways,
+			Image:           viper.GetString("atrraya_image"),
+			ImagePullPolicy: corev1.PullPolicy(viper.GetString("atrraya_image_pull_policy")),
 			Command:         []string{"sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"},
 			VolumeMounts: []corev1.VolumeMount{
 				{

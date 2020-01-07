@@ -13,6 +13,7 @@ import (
 	whhttp "github.com/slok/kubewebhook/pkg/http"
 	"github.com/slok/kubewebhook/pkg/log"
 	"github.com/slok/kubewebhook/pkg/webhook/mutating"
+	"github.com/spf13/viper"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -21,6 +22,9 @@ func init() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		flag.PrintDefaults()
 	}
+
+	viper.SetDefault("atrraya_image", "cmendibl3/atarraya:latest")
+	viper.SetDefault("atrraya_image_pull_policy", string(corev1.PullIfNotPresent))
 }
 
 func main() {
