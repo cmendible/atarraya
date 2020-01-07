@@ -88,6 +88,10 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y azure-cli \
     #
+    && curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+    && chmod 700 get_helm.sh \
+    && ./get_helm.sh \
+    #
     # Install Terraform, tflint, and graphviz
     && mkdir -p /tmp/docker-downloads \
     && curl -sSL -o /tmp/docker-downloads/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
@@ -100,6 +104,7 @@ RUN apt-get update \
     && rm -rf /tmp/docker-downloads \
     && apt-get install -y graphviz \
     #
+    && az aks install-cli \
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
     && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
