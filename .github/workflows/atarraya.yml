@@ -44,4 +44,5 @@ jobs:
       - name: Run make go.mod check-diff
         run: git diff --exit-code ./go.mod # check no changes
       - name: Run make test
+        if: matrix.target_arch != 'arm'
         run: go test ./...
