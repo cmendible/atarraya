@@ -7,9 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 
-	"github.com/Azure/azure-sdk-for-go/services/keyvault/2016-10-01/keyvault"
+	"github.com/Azure/azure-sdk-for-go/profiles/latest/keyvault/keyvault"
 	"github.com/Azure/azure-sdk-for-go/services/keyvault/auth"
 	"github.com/joho/godotenv"
 )
@@ -48,50 +47,19 @@ func newkvClient(keyvaultName string) *kvClient {
 	return client
 }
 
-func (kv *kvClient) getKeyVaultSecret(secretname string, secretversion string) (string, error) {
+func (kv *kvClient) getKeyVaultSecret(secretname string) (string, error) {
 	keyvaultSecretName := secretname
-	keyvaultSecretVersion := secretversion
-	secretVersionPresent := len(secretversion) > 0
 
-	if !secretVersionPresent {
-		result, err := kv.Instance.GetSecretVersions(context.Background(), kv.keyvaultEndpoint, keyvaultSecretName, nil)
-
-		if err != nil {
-			log.Printf("failed to retrieve Keyvault secret versions: %v", err)
-			return "", err
-		}
-
-		var secretDate time.Time
-		var secretVersion string
-		for result.NotDone() {
-			for _, secret := range result.Values() {
-				if *secret.Attributes.Enabled {
-					updatedTime := time.Time(*secret.Attributes.Updated)
-					if secretDate.IsZero() || updatedTime.After(secretDate) {
-						secretDate = updatedTime
-
-						// Get the version
-						parts := strings.Split(*secret.ID, "/")
-						secretVersion = parts[len(parts)-1]
-					}
-				}
-			}
-
-			result.Next()
-		}
-		keyvaultSecretVersion = secretVersion
-	}
-
-	log.Printf("reading secret %s with version %s", keyvaultSecretName, keyvaultSecretVersion)
+	log.Printf("reading secret %s", keyvaultSecretName)
 
 	// Get and return the secret
-	secret, err := kv.Instance.GetSecret(context.Background(), kv.keyvaultEndpoint, keyvaultSecretName, keyvaultSecretVersion)
+	secret, err := kv.Instance.GetSecret(context.Background(), kv.keyvaultEndpoint, keyvaultSecretName, "")
 	if err != nil {
 		log.Printf("failed to retrieve the Keyvault secret: %v", err)
 		return "", err
 	}
 
-	log.Printf("secret %s with version %s was found and returned", keyvaultSecretName, keyvaultSecretVersion)
+	log.Printf("secret %s was found and returned", keyvaultSecretName)
 	return *secret.Value, nil
 }
 
@@ -123,7 +91,7 @@ func main() {
 	for _, secretName := range secretsToRead {
 		// Fetch secret here & append it to the environment vars
 		log.Printf("Reading: %s", secretName)
-		secret, err := client.getKeyVaultSecret(secretName, "")
+		secret, err := client.getKeyVaultSecret(secretName)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -138,5 +106,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
