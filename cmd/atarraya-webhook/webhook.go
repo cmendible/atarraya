@@ -18,10 +18,6 @@ import (
 var (
 	runtimeScheme = runtime.NewScheme()
 	codecs        = serializer.NewCodecFactory(runtimeScheme)
-	deserializer  = codecs.UniversalDeserializer()
-
-	// (https://github.com/kubernetes/kubernetes/issues/57982)
-	defaulter = runtime.ObjectDefaulter(runtimeScheme)
 )
 
 const (
@@ -138,7 +134,7 @@ func (mwh *webhookServer) mutatePod(pod *corev1.Pod) error {
 	}
 
 	if !skip {
-		mwh.mutateContainers(pod.Spec.Containers, keyvaultName)
+		_, _ = mwh.mutateContainers(pod.Spec.Containers, keyvaultName)
 		pod.Spec.InitContainers = append(getInitContainers(), pod.Spec.InitContainers...)
 		pod.Spec.Volumes = append(pod.Spec.Volumes, getVolumes()...)
 		pod.ObjectMeta.Annotations[statusAnnotationKey] = statusInjected

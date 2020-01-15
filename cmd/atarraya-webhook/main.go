@@ -52,7 +52,7 @@ func main() {
 
 	mutator := mutating.MutatorFunc(server.atarrayaMutator)
 
-	webhook, err := mutating.NewWebhook(
+	webhook, _ := mutating.NewWebhook(
 		mutating.WebhookConfig{Name: "atarraya-mutator", Obj: &corev1.Pod{}},
 		mutator,
 		nil,
@@ -86,5 +86,5 @@ func main() {
 	<-signalChan
 
 	logger.Infof("Got OS shutdown signal, shutting down webhook server gracefully...")
-	server.Server.Shutdown(context.Background())
+	_ = server.Server.Shutdown(context.Background())
 }
