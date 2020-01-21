@@ -23,8 +23,8 @@ func init() {
 		flag.PrintDefaults()
 	}
 
-	viper.SetDefault("atrraya_image", "cmendibl3/atarraya:latest")
-	viper.SetDefault("atrraya_image_pull_policy", string(corev1.PullIfNotPresent))
+	viper.SetDefault("atarraya_image", "cmendibl3/atarraya:latest")
+	viper.SetDefault("atarraya_image_pull_policy", string(corev1.PullIfNotPresent))
 }
 
 func main() {

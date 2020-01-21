@@ -61,8 +61,8 @@ func getInitContainers() []corev1.Container {
 	return []corev1.Container{
 		{
 			Name:            "az-atarraya-init",
-			Image:           viper.GetString("atrraya_image"),
-			ImagePullPolicy: corev1.PullPolicy(viper.GetString("atrraya_image_pull_policy")),
+			Image:           viper.GetString("atarraya_image"),
+			ImagePullPolicy: corev1.PullPolicy(viper.GetString("atarraya_image_pull_policy")),
 			Command:         []string{"sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"},
 			VolumeMounts: []corev1.VolumeMount{
 				{
