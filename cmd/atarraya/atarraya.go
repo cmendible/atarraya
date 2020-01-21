@@ -65,7 +65,7 @@ func (kv *kvClient) getKeyVaultSecret(secretname string) (string, error) {
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	var cmd []string
