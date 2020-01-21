@@ -63,7 +63,7 @@ func Test_getInitContainers(t *testing.T) {
 				{
 					Name:            "az-atarraya-init",
 					Image:           "cmendibl3/atarraya:latest",
-					ImagePullPolicy: corev1.PullAlways,
+					ImagePullPolicy: corev1.PullIfNotPresent,
 					Command:         []string{"sh", "-c", "cp /usr/local/bin/atarraya /atarraya/"},
 					VolumeMounts: []corev1.VolumeMount{
 						{
