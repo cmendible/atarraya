@@ -6,6 +6,10 @@ With **atarraya** it's possible to avoid the use of Kubernetes secrets and any c
 
 This project is an evolution of my work on [az-keyvault-reader](https://github.com/cmendible/az-keyvault-reader) and inspired by the following post: [Inject secrets directly into Pods from Vault revisited](https://banzaicloud.com/blog/inject-secrets-into-pods-vault-revisited/) by Nandor Kracser for [BanzaiCloud](https://banzaicloud.com/)
 
+## Killing the project in favor of Dapr
+
+Since [Enable GET for secret stores to dynamically fetch secrets](https://github.com/dapr/dapr/pull/1059) work was finished and merged please use [Dapr](dapr.io) as the standard way to access secrets via a sidecar.
+
 ## Disclaimer
 
 **atarraya** is **not production ready**
